@@ -14,6 +14,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -43,8 +44,8 @@ public class DetailActivity extends AppCompatActivity {
         Log.d("dd",String.valueOf(Movie.getPosterUri(movie)));
         Uri posterUri = Movie.getPosterUri(movie);
 
-        Log.d(LOG_TAG,movie.mov_name + movie.mov_runtime + movie.mov_star + movie.mov_release_year +
-                movie.mov_rating + movie.mov_desc+ movie.mov_poster_path);
+        Log.d(LOG_TAG,movie.title + movie.original_language + movie.mov_star + movie.release_date +
+                movie.vote_average + movie.overview+ movie.poster_path);
         Glide.with(getApplicationContext())
                 .load(posterUri)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
@@ -71,7 +72,18 @@ public class DetailActivity extends AppCompatActivity {
         CollapsingToolbarLayout collapsingToolbarLayout =
                 (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
 
+        TextView vote_average = (TextView) findViewById(R.id.mov_rating);
+        TextView release_date = (TextView) findViewById(R.id.mov_release_year);
+        TextView runtim = (TextView) findViewById(R.id.mov_runtime);
+        TextView overview = (TextView) findViewById(R.id.mov_overview);
+        String release_part[] = movie.release_date.split("-");
+        runtim.setText("");
+        vote_average.setText(String.valueOf(movie.vote_average+"/10"));
+        release_date.setText(release_part[0]);
+        overview.setText(movie.overview);
 
+        //Color from Poster ---> Statusbar&actionbar
+        //// TODO: 4/14/16 fix coloring method below
         /*Glide
                 .with(getApplicationContext())
                 .load(posterUri)

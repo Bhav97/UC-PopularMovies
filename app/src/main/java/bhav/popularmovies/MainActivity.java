@@ -1,9 +1,11 @@
 package bhav.popularmovies;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
@@ -12,11 +14,10 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
-    DataFetcher dataFetcher = new DataFetcher();
     private RecyclerView recyclerView;
     private final static int COLUMN_COUNT = 3;
-    ArrayList<Movie> MovieList = new ArrayList<Movie>();
-    private MovieAdapter movieAdapter;
+    static ArrayList<Movie> MovieList = new ArrayList<Movie>();
+    private static MovieAdapter movieAdapter;
 
 
 
@@ -25,13 +26,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         recyclerView = (RecyclerView) findViewById(R.id.rv_posters);
-        MovieList = dataFetcher.mMovieList;
-        MovieList.add(new Movie("Fight Club", getString(R.string.sample_desc)
-                , "8.8/10", "nBNZadXqJSdt05SHLqgT0HuC5Gm.jpg", "true", "2010","120 mins"));
-        MovieList.add(new Movie("Fight Club", getString(R.string.sample_desc)
-                , "8.8/10", "nBNZadXqJSdt05SHLqgT0HuC5Gm.jpg", "true", "2010","120 mins"));
-        MovieList.add(new Movie("Fight Club", getString(R.string.sample_desc)
-                , "8.8/10", "nBNZadXqJSdt05SHLqgT0HuC5Gm.jpg", "true", "2010","120 mins"));
+        FetchData();
 
         movieAdapter = new MovieAdapter(MainActivity.this, MovieList);
         recyclerView.setAdapter(movieAdapter);
@@ -48,8 +43,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if(id==R.id.action_refresh) {
-            FetchData();
+        if (id==R.id.action_settings) {
+            Intent settings = new Intent(MainActivity.this,SettingsActivity.class);
+            startActivity(settings);
         }
 
 
@@ -57,7 +53,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void FetchData() {
+        MovieList.clear();
+        DataFetcher dataFetcher = new DataFetcher(MainActivity.this);
         dataFetcher.execute();
+
+    }
+
+    public static void UpdateUI() {
+        Log.d("f", "UpdateUI: ");
         movieAdapter.notifyDataSetChanged();
     }
 
