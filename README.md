@@ -1,5 +1,8 @@
-# UC-PopularMovies
+#UC-PopularMovies
+
 Udacity Project: Popular Movies app
+
+![logo](https://github.com/Bhav97/UC-PopularMovies/blob/master/app/src/main/res/mipmap-hdpi/ic_launcher.png)
 
 ##API used
 
