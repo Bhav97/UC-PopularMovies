@@ -20,5 +20,7 @@ Udacity Project: Popular Movies app
  *STAGE 2*
 * Add capability to fetch Reviews
 * Add capability to fetch trailers
+
+
 ~~add favourite button~~
 * include favourited movies in the main screen , seperately
