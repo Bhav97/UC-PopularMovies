@@ -1,5 +1,6 @@
 package bhav.popularmovies;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -8,13 +9,8 @@ import android.util.Log;
 
 import com.bluelinelabs.logansquare.LoganSquare;
 
-import org.json.JSONException;
-
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -27,21 +23,22 @@ import javax.net.ssl.HttpsURLConnection;
  */
 public class DataFetcher extends AsyncTask<Void, Void, String> {
 
+    private final static String LOG_TAG = DataFetcher.class.getSimpleName();
     public static ArrayList<Movie> mMovieList = new ArrayList<Movie>();
-
     Context mContext;
     SharedPreferences prefs ;
-    private String sort;
+    ProgressDialog pdia;
 
     public DataFetcher(Context context){
         this.mContext = context;
         prefs = context.getSharedPreferences("prefs",Context.MODE_PRIVATE);
     }
 
-    private final static String LOG_TAG = DataFetcher.class.getSimpleName();
-
     @Override
     protected void onPreExecute() {
+        pdia = new ProgressDialog(mContext);
+        pdia.setMessage("Fetching content. Please wait...");
+        pdia.show();
         super.onPreExecute();
     }
 
@@ -56,21 +53,7 @@ public class DataFetcher extends AsyncTask<Void, Void, String> {
 
 
             Log.d(LOG_TAG, "building uri");
-            Uri.Builder builder = new Uri.Builder()
-                    .scheme("https")
-                    .authority("api.themoviedb.org")
-                    .appendPath("3");
-            if(prefs.getString("sort", "Popular").equals("Popular")){
-                builder.appendPath("movie").appendPath("popular");
-            } else {
-                builder.appendPath("discover").appendPath("movie").appendQueryParameter("sort_by","vote_average.desc");
-            }
-            Uri getUri  = builder.
-                    appendQueryParameter("api_key",>>>>>>>>>>ADD YOUR OWN API<<<<<<<<<<<<<<< ).build();
-            Log.d(LOG_TAG, "api uri built");
-            Log.d(LOG_TAG, String.valueOf(getUri));
-
-
+            Uri getUri = UriMaker.makeMeAURI(mContext);
             URL url = new URL(getUri.toString());
             urlConnection = (HttpsURLConnection) url.openConnection();
             urlConnection.setRequestMethod("GET");
@@ -108,6 +91,7 @@ public class DataFetcher extends AsyncTask<Void, Void, String> {
 
     @Override
     protected void onPostExecute(String result) {
+        pdia.dismiss();
         Log.d(LOG_TAG, "updating ui");
         MainActivity.UpdateUI();
         super.onPostExecute(result);

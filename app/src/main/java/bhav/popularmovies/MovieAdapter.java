@@ -5,8 +5,6 @@ import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Build;
-import android.os.Parcelable;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,8 +15,6 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 
 /**
@@ -48,24 +44,36 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieHolder>
         Uri posterUri = Movie.getPosterUri(movies.get(position));
 
         Log.d(LOG_TAG,String.valueOf(posterUri));
-        Glide.with(context.getApplicationContext())
-                .load(posterUri)
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .into(holder.imageView);
+        if (posterUri != null) { //prevent crash if there was no poster
+            Glide.with(context.getApplicationContext())
+                    .load(posterUri)
+                    .placeholder(R.drawable.img_placeholder)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .into(holder.imageView);
+        } else {
+            Glide.with(context.getApplicationContext())
+                    .load(R.drawable.img_placeholder)
+                    .crossFade(0)
+                    .into(holder.imageView);
+        }
 
         holder.imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent details = new Intent(context , DetailActivity.class);
                 details.putExtra("movie",movies.get(position));
-                ActivityOptions transitionActivityOptions = ActivityOptions
-                        .makeSceneTransitionAnimation((Activity) context, holder.imageView, "image");
-                context.startActivity(details, transitionActivityOptions.toBundle());
-
+                ActivityOptions transitionActivityOptions;
+                //support for pre-lollipop
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                    transitionActivityOptions = ActivityOptions
+                            .makeSceneTransitionAnimation((Activity) context, holder.imageView, "image");
+                    context.startActivity(details, transitionActivityOptions.toBundle());
+                } else {
+                    context.startActivity(details);
+                }
             }
         });
     }
-
 
     @Override
     public int getItemCount() {

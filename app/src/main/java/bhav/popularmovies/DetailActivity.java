@@ -1,12 +1,8 @@
 package bhav.popularmovies;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -18,16 +14,11 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.animation.GlideAnimation;
-import com.bumptech.glide.request.target.SimpleTarget;
-import com.bumptech.glide.request.target.Target;
 
 public class DetailActivity extends AppCompatActivity {
 
-    private Movie movie;
     private final static String LOG_TAG = DetailActivity.class.getSimpleName();
+    private Movie movie;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,15 +32,30 @@ public class DetailActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         final ImageView posterView = (ImageView) findViewById(R.id.mov_poster);
+        final ImageView backdropView = (ImageView) findViewById(R.id.image_stretch_detail);
         Log.d("dd",String.valueOf(Movie.getPosterUri(movie)));
         Uri posterUri = Movie.getPosterUri(movie);
+        Uri backdropUri = Movie.getBackdropUri(movie);
 
         Log.d(LOG_TAG,movie.title + movie.original_language + movie.mov_star + movie.release_date +
                 movie.vote_average + movie.overview+ movie.poster_path);
-        Glide.with(getApplicationContext())
-                .load(posterUri)
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .into(posterView);
+
+        if (posterUri != null) { //prevent crash if there was no poster
+            Glide.with(getApplicationContext())
+                    .load(posterUri)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .into(posterView);
+        } else { //never empty
+            Glide.with(getApplicationContext())
+                    .load(R.drawable.img_placeholder)
+                    .into(posterView);
+        }
+
+        if (backdropUri != null) { //prevevnt crash if backdrop wasn't available
+            Glide.with(getApplicationContext())
+                    .load(backdropUri)
+                    .into(backdropView);
+        }
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         assert fab != null;
@@ -69,8 +75,7 @@ public class DetailActivity extends AppCompatActivity {
         });
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(Movie.getName(movie));
-        CollapsingToolbarLayout collapsingToolbarLayout =
-                (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
+
 
         TextView vote_average = (TextView) findViewById(R.id.mov_rating);
         TextView release_date = (TextView) findViewById(R.id.mov_release_year);
