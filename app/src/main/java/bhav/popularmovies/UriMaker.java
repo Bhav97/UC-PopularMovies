@@ -24,6 +24,6 @@ public class UriMaker {
             builder.appendPath("movie").appendPath("top_rated");
         }
         return builder.
-                appendQueryParameter("api_key", ">>>>>>>>APIKEY<<<<<<<<<<").build();
+                appendQueryParameter("api_key", "a3c49b02d993096b9e38cecc350245c3").build();
     }
 }

@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -31,13 +30,14 @@ public class DetailActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         final ImageView posterView = (ImageView) findViewById(R.id.mov_poster);
         final ImageView backdropView = (ImageView) findViewById(R.id.image_stretch_detail);
         Log.d("dd",String.valueOf(Movie.getPosterUri(movie)));
         Uri posterUri = Movie.getPosterUri(movie);
         Uri backdropUri = Movie.getBackdropUri(movie);
 
-        Log.d(LOG_TAG,movie.title + movie.original_language + movie.mov_star + movie.release_date +
+        Log.d(LOG_TAG, movie.title + movie.original_language + movie.release_date +
                 movie.vote_average + movie.overview+ movie.poster_path);
 
         if (posterUri != null) { //prevent crash if there was no poster
@@ -62,15 +62,7 @@ public class DetailActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(Movie.getStar(movie)) {
-                    Snackbar.make(view, "Removed from favourites", Snackbar.LENGTH_SHORT)
-                            .setAction("Action", null).show();
-                    Movie.setStar(movie , false);
-                } else {
-                    Snackbar.make(view, "Added to favourites", Snackbar.LENGTH_SHORT)
-                            .setAction("Action", null).show();
-                    Movie.setStar(movie, true);
-                }
+
             }
         });
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -107,5 +99,10 @@ public class DetailActivity extends AppCompatActivity {
         getWindow().setStatusBarColor(color);
         toolbar.setBackground(new ColorDrawable(color)); // Possibly runOnUiThread()*/
 
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
     }
 }

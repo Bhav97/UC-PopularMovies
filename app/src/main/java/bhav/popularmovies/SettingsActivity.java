@@ -33,8 +33,10 @@ public class SettingsActivity extends PreferenceActivity {
                 SharedPreferences.Editor editor = prefs.edit();
                 String temp = (String) newValue;
                 editor.putString("sort", temp);
-                editor.putBoolean("doIneedtofetchdata", true);
+//                editor.putBoolean("doIneedtofetchdata", true);
                 preference.setSummary(temp);
+                DataFetcher df = new DataFetcher(SettingsActivity.this, false);
+                df.execute();
                 editor.apply();
                 return true;
             }

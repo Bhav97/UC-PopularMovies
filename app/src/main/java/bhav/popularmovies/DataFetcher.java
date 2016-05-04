@@ -1,7 +1,9 @@
 package bhav.popularmovies;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -26,19 +28,25 @@ public class DataFetcher extends AsyncTask<Void, Void, String> {
     private final static String LOG_TAG = DataFetcher.class.getSimpleName();
     public static ArrayList<Movie> mMovieList = new ArrayList<Movie>();
     Context mContext;
-    SharedPreferences prefs ;
+    SharedPreferences prefs;
     ProgressDialog pdia;
+    private boolean calledfromSplash;
 
-    public DataFetcher(Context context){
+    public DataFetcher(Context context, boolean calledFromSplash) {
         this.mContext = context;
-        prefs = context.getSharedPreferences("prefs",Context.MODE_PRIVATE);
+        this.calledfromSplash = calledFromSplash;
+        //prefs = context.getSharedPreferences("prefs", Context.MODE_PRIVATE);
     }
 
     @Override
     protected void onPreExecute() {
-        pdia = new ProgressDialog(mContext);
-        pdia.setMessage("Fetching content. Please wait...");
-        pdia.show();
+        if (calledfromSplash) {
+            SplashActivity.showSpinner(true);
+        } else {
+            pdia = new ProgressDialog(mContext);
+            pdia.setMessage("Fetching content. Please wait...");
+            pdia.show();
+        }
         super.onPreExecute();
     }
 
@@ -51,7 +59,6 @@ public class DataFetcher extends AsyncTask<Void, Void, String> {
         try {
 
 
-
             Log.d(LOG_TAG, "building uri");
             Uri getUri = UriMaker.makeMeAURI(mContext);
             URL url = new URL(getUri.toString());
@@ -61,24 +68,22 @@ public class DataFetcher extends AsyncTask<Void, Void, String> {
 
             InputStream inputStream = urlConnection.getInputStream();
 
-            if(inputStream == null) {
+            if (inputStream == null) {
                 Log.d(LOG_TAG, "null input stream");
                 return null;
             }
             ArrayList<ResultObject> resultArray = new ArrayList<ResultObject>();
-            resultArray.add(LoganSquare.parse(inputStream,ResultObject.class));
-            int i =0;
-            for(Movie m: resultArray.get(0).movieArrayList) {
-                mMovieList.add(resultArray.get(0).movieArrayList.get(i));
-                i+=1;
+            resultArray.add(LoganSquare.parse(inputStream, ResultObject.class));
+            for (Movie m : resultArray.get(0).movieArrayList) {
+                mMovieList.add(m);
             }
             Log.d(LOG_TAG, "doInBackground: finishing up");
-            for(Movie movie: mMovieList){
-                Log.d("FetchData:",movie.title + movie.poster_path + movie.original_language);
+            for (Movie movie : mMovieList) {
+                Log.d("FetchData:", movie.title + movie.poster_path + movie.original_language);
             }
-            MainActivity.MovieList.addAll(mMovieList);
+            MainActivity.mMovieList.addAll(mMovieList);
             return null;
-        }catch (MalformedURLException e) {
+        } catch (MalformedURLException e) {
             e.printStackTrace();
             Log.d(LOG_TAG, e.getMessage());
             return null;
@@ -91,9 +96,16 @@ public class DataFetcher extends AsyncTask<Void, Void, String> {
 
     @Override
     protected void onPostExecute(String result) {
-        pdia.dismiss();
-        Log.d(LOG_TAG, "updating ui");
-        MainActivity.UpdateUI();
+        if (calledfromSplash) {
+            SplashActivity.showSpinner(false);
+            Intent intent = new Intent(mContext, MainActivity.class);
+            mContext.startActivity(intent);
+            ((Activity) mContext).finish();
+        } else {
+            pdia.dismiss();
+            Log.d(LOG_TAG, "updating ui");
+            MainActivity.UpdateUI();
+        }
         super.onPostExecute(result);
     }
 }

@@ -22,6 +22,8 @@ import java.util.ArrayList;
  */
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieHolder> {
 
+    private static final String TAG = MovieAdapter.class.getSimpleName();
+
     private final static String LOG_TAG = MovieAdapter.class.getSimpleName();
 
     private ArrayList<Movie> movies = new ArrayList<Movie>();

@@ -6,10 +6,11 @@
         android:orderInCategory="100"
         android:title="@string/action_settings"
         app:showAsAction="never" />
-    <!-- <item
-         android:id="@+id/action_faves"
-         android:orderInCategory="99"
-         android:title="@string/action_faves"
-         app:showAsAction="never" />-->
+
+    <item
+        android:id="@+id/action_fav"
+        android:orderInCategory="10"
+        android:title="@string/action_show_favourites"
+        app:showAsAction="never" />
 
 </menu>
