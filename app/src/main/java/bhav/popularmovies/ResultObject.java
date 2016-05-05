@@ -13,9 +13,6 @@ import java.util.ArrayList;
 @JsonObject
 public class ResultObject {
 
-    public ResultObject(){
-    }
-
     @JsonField(name = "page")
     public int page;
     @JsonField(name = "results")
@@ -25,7 +22,10 @@ public class ResultObject {
     @JsonField(name = "total_pages")
     public int total_pages;
 
-    public ResultObject (int page, ArrayList<Movie> movieArrayList,int total_results,int total_pages) {
+    public ResultObject() {
+    }
+
+    public ResultObject(int page, ArrayList<Movie> movieArrayList, int total_results, int total_pages) {
         this.page = page;
         this.movieArrayList = movieArrayList;
         this.total_results = total_results;

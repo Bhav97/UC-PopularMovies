@@ -28,18 +28,18 @@ public class SettingsActivity extends PreferenceActivity {
         );
         getPreferenceScreen().findPreference("sort").setOnPreferenceChangeListener(
                 new Preference.OnPreferenceChangeListener() {
-            @Override
-            public boolean onPreferenceChange(Preference preference, Object newValue) {
-                SharedPreferences.Editor editor = prefs.edit();
-                String temp = (String) newValue;
-                editor.putString("sort", temp);
+                    @Override
+                    public boolean onPreferenceChange(Preference preference, Object newValue) {
+                        SharedPreferences.Editor editor = prefs.edit();
+                        String temp = (String) newValue;
+                        editor.putString("sort", temp);
 //                editor.putBoolean("doIneedtofetchdata", true);
-                preference.setSummary(temp);
-                DataFetcher df = new DataFetcher(SettingsActivity.this, false);
-                df.execute();
-                editor.apply();
-                return true;
-            }
-        });
+                        preference.setSummary(temp);
+                        DataFetcher df = new DataFetcher(SettingsActivity.this, false);
+                        df.execute();
+                        editor.apply();
+                        return true;
+                    }
+                });
     }
 }

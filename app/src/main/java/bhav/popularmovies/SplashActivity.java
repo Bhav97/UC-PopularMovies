@@ -1,5 +1,6 @@
 package bhav.popularmovies;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -15,6 +16,15 @@ public class SplashActivity extends AppCompatActivity {
         } else {
             mSimpleMaterialSpinner.setVisibility(View.INVISIBLE);
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        //if user exits, stop AsyncTask
+        if (mDataFetcher.getStatus() != AsyncTask.Status.FINISHED) {
+            mDataFetcher.cancel(true);
+        }
+        super.onBackPressed();
     }
 
     @Override

@@ -45,6 +45,7 @@ public class DataFetcher extends AsyncTask<Void, Void, String> {
         } else {
             pdia = new ProgressDialog(mContext);
             pdia.setMessage("Fetching content. Please wait...");
+            pdia.setCancelable(false);
             pdia.show();
         }
         super.onPreExecute();
@@ -80,6 +81,9 @@ public class DataFetcher extends AsyncTask<Void, Void, String> {
             Log.d(LOG_TAG, "doInBackground: finishing up");
             for (Movie movie : mMovieList) {
                 Log.d("FetchData:", movie.title + movie.poster_path + movie.original_language);
+            }
+            if (MainActivity.mMovieList != null) {
+                MainActivity.mMovieList.clear();
             }
             MainActivity.mMovieList.addAll(mMovieList);
             return null;

@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
+
     tools:context="bhav.popularmovies.DetailActivity">
 
     <android.support.design.widget.AppBarLayout
@@ -40,7 +41,9 @@
         </android.support.design.widget.CollapsingToolbarLayout>
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/content_detail" />
+    <include
+        layout="@layout/content_detail"
+        android:layout_alignBottom="@id/app_bar" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"

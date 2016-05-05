@@ -7,8 +7,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -22,7 +20,7 @@ public class DBHandler extends SQLiteOpenHelper {
     private static final String TAG = DBHandler.class.getSimpleName();
 
     private static final String DB_NAME = "PopularMoviesDatabase";
-    private static final int DB_VERSION = 1;
+    private static final int DB_VERSION = 2;
     private static final String TABLE_NAME = "FavouriteMovies";
 
     //COLUMNS
@@ -75,45 +73,55 @@ public class DBHandler extends SQLiteOpenHelper {
         //CHECK FOR EXISTING COLUMNS
         String REDUNDANCY_CHECK = "SELECT * FROM " + TABLE_NAME
                 + " WHERE " + ID + " = " + MovieId;
-        Cursor cursor = getReadableDatabase().rawQuery(REDUNDANCY_CHECK, null);
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.rawQuery(REDUNDANCY_CHECK, null);
         if (cursor.getCount() <= 0) {
             cursor.close();
             return false;
         }
         cursor.close();
+        if (db.isOpen()) {
+            db.close();
+        }
         return true;
     }
 
     public void addMovie(Movie m) {
-        if (CheckIfExists(String.valueOf(m.id))) {
+        if (CheckIfExists(String.valueOf(m.id))) { //shouldn't happen, but just in case
             return;
         }
         JSONObject genre_json = new JSONObject();
         JSONObject video_json = new JSONObject();
-        try {
-            genre_json.put(GENRE, new JSONArray(m.genre_ids));
-            video_json.put(VIDEO, new JSONArray(m.video));
+        //genre_json.put(GENRE, new JSONArray(m.genre_ids));
+        //video_json.put(VIDEO, new JSONArray(m.video));
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put(TITLE, m.title);
+        cv.put(POPULARITY, m.popularity);
+        cv.put(VOTE_COUNT, m.vote_count);
+        cv.put(BACKDROP_URI, m.backdrop_path);
+        //cv.put(VIDEO, video_json.toString());
+        //cv.put(GENRE, genre_json.toString());
+        cv.put(ORIGINAL_TITLE, m.original_title);
+        cv.put(ADULT, m.adult);
+        cv.put(ID, m.id);
+        cv.put(OVERVIEW, m.overview);
+        cv.put(VOTE_AVERAGE, m.vote_average);
+        cv.put(POSTER_URI, m.poster_path);
+        cv.put(RELEASE_DATE, m.release_date);
+        cv.put(ORIGINAL_LANUAGE, m.original_language);
+        db.insert(TABLE_NAME, null, cv);
+        db.close();
+    }
+
+    public void removeMovieFromFavourites(Movie m) {
+        if (CheckIfExists(String.valueOf(m.id))) {
             SQLiteDatabase db = getWritableDatabase();
-            ContentValues cv = new ContentValues();
-            cv.put(TITLE, m.title);
-            cv.put(POPULARITY, m.popularity);
-            cv.put(VOTE_COUNT, m.vote_count);
-            cv.put(BACKDROP_URI, m.backdrop_path);
-            cv.put(VIDEO, video_json.toString());
-            cv.put(GENRE, genre_json.toString());
-            cv.put(ORIGINAL_TITLE, m.original_title);
-            cv.put(ADULT, m.adult);
-            cv.put(ID, m.id);
-            cv.put(OVERVIEW, m.overview);
-            cv.put(VOTE_AVERAGE, m.vote_average);
-            cv.put(POSTER_URI, m.poster_path);
-            cv.put(RELEASE_DATE, m.release_date);
-            cv.put(ORIGINAL_LANUAGE, m.original_language);
-            db.insert(TABLE_NAME, null, cv);
-            db.close();
-        } catch (JSONException e) {
-            Log.e(TAG, e.getMessage());
-            addMovie(m);
+            db.delete(DB_NAME, ID + "=" + m.id, null);
+            Log.d(TAG, m.title + " removed");
+            if (db.isOpen()) {
+                db.close();
+            }
         }
     }
 

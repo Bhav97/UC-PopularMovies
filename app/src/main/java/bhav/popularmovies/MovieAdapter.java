@@ -45,11 +45,12 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieHolder>
     public void onBindViewHolder(final MovieHolder holder, final int position) {
         Uri posterUri = Movie.getPosterUri(movies.get(position));
 
-        Log.d(LOG_TAG,String.valueOf(posterUri));
+        Log.d(LOG_TAG, String.valueOf(posterUri));
         if (posterUri != null) { //prevent crash if there was no poster
             Glide.with(context.getApplicationContext())
                     .load(posterUri)
-                    .placeholder(R.drawable.img_placeholder)
+//                    .placeholder(R.drawable.img_placeholder)
+                    .crossFade(0)
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(holder.imageView);
         } else {
@@ -62,8 +63,8 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieHolder>
         holder.imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent details = new Intent(context , DetailActivity.class);
-                details.putExtra("movie",movies.get(position));
+                Intent details = new Intent(context, DetailActivity.class);
+                details.putExtra("movie", movies.get(position));
                 ActivityOptions transitionActivityOptions;
                 //support for pre-lollipop
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
